@@ -34,7 +34,7 @@ The data is written out to `/user/cloudera/simple_pull`.
 
 |Column Name       |Data Type    |Size |
 |------------------|-------------|:---:|
-|id                |INT          |     |
+|id                |integer      |     |
 |first_name        |varchar      |45   |
 |last_name         |varchar      |45   |
 |street_address_1  |varchar      |45   |
@@ -44,3 +44,38 @@ The data is written out to `/user/cloudera/simple_pull`.
 |aip               |varchar      |8    |
 
 The table and schema are created using `/simple_pull/simple_pull.sql`.
+
+#### incremental pulls
+---
+
+##### DataLoader
+
+`com.intersysconsulting.sqoop.examples.data.DataLoader` can be used to load data into a MySQL database.  This tool connects to the database, reads the schema for the table and will generate random data to populate the table.  The arguments are as follows:
+
+1. server - The hostname and the port of the database to populate. Example: localhost:3306
+2. database - The name of the database / schema to insert data into
+3. user - The user to use when connecting to the database.
+4. password - The password to use when connecting to the database.
+5. table - The table to insert data into.
+6. numBatches - The number of batches to execute (2.5 second delay between batches)
+7. itemsPerBatch - The number of records to insert for each batch.
+
+All arguments are required.
+
+##### append
+
+The append pull creates a Sqoop job that pulls from the `log_records` table based off of the id.  Use the
+'sqoop/incremental-pull/append.sh` script to run the job.
+
+Additional executions of the job can be executed with `sqoop job --exec append-job`.
+The job can be removed with `sqoop job --delete append-job`.
+
+###### Log Records
+
+|Column Name       |Data Type    |Size |
+|------------------|-------------|:---:|
+|id                |integer      |     |
+|system            |varchar      |45   |
+|log_detail        |varchar      |45   |
+|create_date       |timestamp    |45   |
+

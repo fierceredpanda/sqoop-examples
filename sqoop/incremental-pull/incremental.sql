@@ -1,0 +1,8 @@
+CREATE SCHEMA IF NOT EXISTS incramental;
+
+CREATE TABLE IF NOT EXISTS incramental.log_records (
+  id INT NOT NULL AUTO_INCREMENT,
+  system VARCHAR(45) NOT NULL,
+  log_detail VARCHAR(45) NOT NULL,
+  create_date TIMESTAMP NOT NULL,
+  PRIMARY KEY (id));

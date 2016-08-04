@@ -1,15 +1,15 @@
-CREATE SCHEMA `simple_pull` ;
+CREATE SCHEMA simple_pull ;
 
-CREATE TABLE `simple_pull`.`customer` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `first_name` VARCHAR(45) NOT NULL,
-  `last_name` VARCHAR(45) NOT NULL,
-  `street_address_1` VARCHAR(45) NULL,
-  `street_address_2` VARCHAR(45) NULL,
-  `city` VARCHAR(45) NULL,
-  `state` VARCHAR(2) NULL,
-  `zip` VARCHAR(8) NULL,
-  PRIMARY KEY (`id`));
+CREATE TABLE simple_pull.customer (
+  id INT NOT NULL AUTO_INCREMENT,
+  first_name VARCHAR(45) NOT NULL,
+  last_name VARCHAR(45) NOT NULL,
+  street_address_1 VARCHAR(45) NULL,
+  street_address_2 VARCHAR(45) NULL,
+  city VARCHAR(45) NULL,
+  state VARCHAR(2) NULL,
+  zip VARCHAR(8) NULL,
+  PRIMARY KEY (id));
 
 INSERT INTO simple_pull.customer (first_name, last_name, street_address_1, street_address_2, city, state, zip)
 VALUES

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 sqoop import \
     --connect "jdbc:mysql://10.0.2.2:3306/simple_pull" \
