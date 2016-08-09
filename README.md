@@ -64,11 +64,9 @@ All arguments are required.
 
 ##### append
 
-The append pull creates a Sqoop job that pulls from the `log_records` table based off of the id.  Use the
-'sqoop/incremental-pull/append.sh` script to run the job.
+The append pull creates a Sqoop job that pulls from the `log_records` table based off of the id.  Create the table by running the `sqoop/incremental-pull/append.sql`' file. Use the `sqoop/incremental-pull/append.sh` script to run the job.
 
-Additional executions of the job can be executed with `sqoop job --exec append-job`.
-The job can be removed with `sqoop job --delete append-job`.
+Additional executions of the job can be executed with `sqoop job --exec append-job`. The job can be removed with `sqoop job --delete append-job`.
 
 ###### Log Records
 
@@ -77,5 +75,19 @@ The job can be removed with `sqoop job --delete append-job`.
 |id                |integer      |     |
 |system            |varchar      |45   |
 |log_detail        |varchar      |45   |
-|create_date       |timestamp    |45   |
+|create_date       |timestamp    |     |
 
+##### lastmodified
+
+The last modified pull creates a Sqoop job that pulls from the `movie-reviews` table based off of the last modified date.  Before running the job use the `sqoop/incremental-pull/lastmodified.sql` script to create and populate the table. Use the `sqoop/incramental-pull/lastmodified.sh` script to run the job.
+
+Additional executions of the job can be executed with `sqoop job --exec lastmodified-job`.  Use the `sqoop/incremental-pull/lastmodified-update.sh` script to update some of the pre-existing rows between each run. The job can be removed with `sqoop job --delete lastmodified-job`. 
+
+###### Movie Reviews
+
+|Column Name       |Data Type    |Size |
+|------------------|-------------|:---:|
+|name              |varchar      |45   |
+|rotten_tomatoes   |int          |     |
+|create_date       |timestamp    |     |
+|modify_date       |timestamp    |     |
