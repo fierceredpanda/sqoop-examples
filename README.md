@@ -25,10 +25,9 @@ Instructions pulled from [here](http://stackoverflow.com/questions/23514244/shar
 ### Sqoop Jobs
 ---
 
-#### simple-pull
+#### simple-import
 
-Simple pull moves data from a MySQL table to HDFS.  Use the `sqoop/simple-pull/simple-pull-sqoop.sh` scropt to run the job.
-The data is written out to `/user/cloudera/simple_pull`.
+Simple import moves data from a MySQL table to HDFS.  Use the `sqoop/simple-import/simple-import.sh` scropt to run the job. The data is written out to `/user/cloudera/simple_import`.
 
 ###### Customer
 
@@ -41,26 +40,35 @@ The data is written out to `/user/cloudera/simple_pull`.
 |street_address_2  |varchar      |45   |
 |city              |varchar      |45   |
 |state             |varchar      |2    |
-|aip               |varchar      |8    |
+|zip               |varchar      |8    |
 
-The table and schema are created using `/simple_pull/simple_pull.sql`.
+The table and schema are created using `/simple_import/simple_import.sql`.
+
+#### simple-export
+
+Simple import moves data from HDFS back to MySQL.  It should be run after the `simple-import` as it moves the data back from HDFS to a similar table.  Use `sqoop/simple-export/simple-export.sh` to execute the job.  You can use the DataLoader (mentioned below) to load more data.
+
+###### Customer-Export
+
+|Column Name       |Data Type    |Size |
+|------------------|-------------|:---:|
+|id                |integer      |     |
+|first_name        |varchar      |45   |
+|last_name         |varchar      |45   |
+|street_address_1  |varchar      |45   |
+|street_address_2  |varchar      |45   |
+|city              |varchar      |45   |
+|state             |varchar      |2    |
+|zip               |varchar      |8    |
+
+The table and schema are created using `/simple_export/simple_export.sql`.
 
 #### incremental pulls
 ---
 
 ##### DataLoader
 
-`com.intersysconsulting.sqoop.examples.data.DataLoader` can be used to load data into a MySQL database.  This tool connects to the database, reads the schema for the table and will generate random data to populate the table.  The arguments are as follows:
-
-1. server - The hostname and the port of the database to populate. Example: localhost:3306
-2. database - The name of the database / schema to insert data into
-3. user - The user to use when connecting to the database.
-4. password - The password to use when connecting to the database.
-5. table - The table to insert data into.
-6. numBatches - The number of batches to execute (2.5 second delay between batches)
-7. itemsPerBatch - The number of records to insert for each batch.
-
-All arguments are required.
+Dataloader is a useful utility that can be used to populate fake data into a table. Take a look at [database-tools](https://github.com/fierceredpanda/database-tools).
 
 ##### append
 
