@@ -23,6 +23,8 @@ To create a shared folder to the VM follow these instructions:
 Instructions pulled from [here](http://stackoverflow.com/questions/23514244/share-folders-from-the-host-mac-os-to-a-guest-linux-system-in-virtualbox).
 
 ### Sqoop Jobs
+
+#### basic imports
 ---
 
 #### simple-import
@@ -63,7 +65,7 @@ Simple import moves data from HDFS back to MySQL.  It should be run after the `s
 
 The table and schema are created using `/simple_export/simple_export.sql`.
 
-#### incremental pulls
+#### incremental imports
 ---
 
 ##### DataLoader
@@ -72,7 +74,7 @@ Dataloader is a useful utility that can be used to populate fake data into a tab
 
 ##### append
 
-The append pull creates a Sqoop job that pulls from the `log_records` table based off of the id.  Create the table by running the `sqoop/incremental-pull/append.sql`' file. Use the `sqoop/incremental-pull/append.sh` script to run the job.
+The append import creates a Sqoop job that imports from the `log_records` table based off of the id.  Create the table by running the `sqoop/incremental-import/append.sql`' file. Use the `sqoop/incremental-import/append.sh` script to run the job.
 
 Additional executions of the job can be executed with `sqoop job --exec append-job`. The job can be removed with `sqoop job --delete append-job`.
 
@@ -87,9 +89,9 @@ Additional executions of the job can be executed with `sqoop job --exec append-j
 
 ##### lastmodified
 
-The last modified pull creates a Sqoop job that pulls from the `movie-reviews` table based off of the last modified date.  Before running the job use the `sqoop/incremental-pull/lastmodified.sql` script to create and populate the table. Use the `sqoop/incramental-pull/lastmodified.sh` script to run the job.
+The last modified import creates a Sqoop job that imports from the `movie-reviews` table based off of the last modified date.  Before running the job use the `sqoop/incremental-import/lastmodified.sql` script to create and populate the table. Use the `sqoop/incramental-import/lastmodified.sh` script to run the job.
 
-Additional executions of the job can be executed with `sqoop job --exec lastmodified-job`.  Use the `sqoop/incremental-pull/lastmodified-update.sh` script to update some of the pre-existing rows between each run. The job can be removed with `sqoop job --delete lastmodified-job`. 
+Additional executions of the job can be executed with `sqoop job --exec lastmodified-job`.  Use the `sqoop/incremental-import/lastmodified-update.sh` script to update some of the pre-existing rows between each run. The job can be removed with `sqoop job --delete lastmodified-job`. 
 
 ###### Movie Reviews
 
@@ -99,3 +101,10 @@ Additional executions of the job can be executed with `sqoop job --exec lastmodi
 |rotten_tomatoes   |int          |     |
 |create_date       |timestamp    |     |
 |modify_date       |timestamp    |     |
+
+#### data modification imports
+---
+
+##### delimeter import
+
+The delimeter import changes the delimeter in a text file as it is pulled from a database and written to HDFS.  The table structure is the same as the movie_reviews table from the last modified incremental pull.  Use `/scoop/delimeter-import/delimeter.sql`.  The import can be run using `/scoop/delimeter-import/delimeter.sh`.
