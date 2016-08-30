@@ -105,6 +105,84 @@ Additional executions of the job can be executed with `sqoop job --exec lastmodi
 #### data modification imports
 ---
 
-##### delimeter import
+##### delimiter import
 
-The delimeter import changes the delimeter in a text file as it is pulled from a database and written to HDFS.  The table structure is the same as the movie_reviews table from the last modified incremental pull.  Use `/scoop/delimeter-import/delimeter.sql`.  The import can be run using `/scoop/delimeter-import/delimeter.sh`.
+The delimiter import changes the delimiter in a text file as it is pulled from a database and written to HDFS.  The table structure is the same as the movie_reviews table from the last modified incremental pull.  Use `/scoop/delimiter-import/delimiter.sql`.  The import can be run using `/scoop/delimiter-import/delimiter.sh`.
+
+##### denormalization import
+
+This import uses a query to select all of the customers with their related addresses.  The data is written denormalized using an Avro format.  
+
+The tables and their initial data can be created using `/sqoop/denorm-import/denorm-import.sql`.  The import can then be executed using `/sqoop/denorm-import/denorm-import.sh`.
+
+##### Customer
+
+|Column Name       |Data Type    |Size |
+|------------------|-------------|:---:|
+|id                |integer      |     |
+|first_name        |varchar      |45   |
+|last_name         |varchar      |45   |
+|age               |integer      |     |
+|height_inches     |integer      |     |
+|weight            |integer      |     |
+
+##### Address
+
+|Column Name       |Data Type    |Size |
+|------------------|-------------|:---:|
+|id                |integer      |     |
+|customer_id       |integer      |     |
+|street_address_1  |varchar      |45   |
+|street_address_2  |varchar      |45   |
+|city              |varchar      |45   |
+|state             |varchar      |2    |
+|zip               |varchar      |8    |
+
+##### Spark - Normalization Job
+
+The Normalization Spark job reads the Avro files, groups the data by Customer and creates a single customer record with a list of addresses.  That data is then written to a parquet file.  The job can be run by running `sbt assembly` copying the resulting JAR to the Cloudera VM and running the following:
+
+    spark-submit \
+        --master yarn \
+        --class com.intersysconsulting.sqoop.examples.denorm.NormalizationJob \
+        --deploy-mode client \
+        sqoop-examples-assembly-1.0.jar
+        	
+##### Spark - Confirm Normalization Job
+     	
+The Confirm Normalization job reads the Parquet file in, prints the Schema and then shows the records.  It can be run from the same JAR file using the following command:
+ 	
+    spark-submit \
+        --master yarn \
+        --class com.intersysconsulting.sqoop.examples.denorm.ConfirmNormalizationJob \
+        --deploy-mode client \
+        sqoop-examples-assembly-1.0.jar
+
+Sample schema:
+
+     |-- customer_id: integer (nullable = true)
+     |-- first_name: string (nullable = true)
+     |-- last_name: string (nullable = true)
+     |-- age: integer (nullable = true)
+     |-- height_inches: integer (nullable = true)
+     |-- weight: integer (nullable = true)
+     |-- addresses: array (nullable = true)
+     |    |-- element: struct (containsNull = true)
+     |    |    |-- address_id: integer (nullable = true)
+     |    |    |-- street_address_1: string (nullable = true)
+     |    |    |-- street_address_2: string (nullable = true)
+     |    |    |-- city: string (nullable = true)
+     |    |    |-- state: string (nullable = true)
+     |    |    |-- zip: string (nullable = true)
+
+Sample data:
+
+    +-----------+----------+---------+---+-------------+------+--------------------+
+    |customer_id|first_name|last_name|age|height_inches|weight|           addresses|
+    +-----------+----------+---------+---+-------------+------+--------------------+
+    |          6|    Sandra|  Bullock| 52|           67|   123|[[7,678 E Hollywo...|
+    |          2|       Tom|    Hanks| 60|           72|   170|[[4,345 E Lexingt...|
+    |          1|       Bob|    Dylan| 75|           67|   130|[[1,123 W Hollywo...|
+    |          7|   Jessica| Chastain| 39|           64|   108|[[11,789 E Hollyw...|
+    |          5|  Chow Yun|      Fat| 61|           72|   180|[[5,456 E Malibu ...|
+    +-----------+----------+---------+---+-------------+------+--------------------+
